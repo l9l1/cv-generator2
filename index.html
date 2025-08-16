@@ -1,4 +1,132 @@
+// إنشاء HTML كامل للسيرة الذاتية
+        function generateFullCV(data) {
+            const initials = data.fullName.split(' ').map(name => name.charAt(0)).join('').substring(0, 2);
+            
+            let experiencesHTML = '';
+            data.experiences.forEach(exp => {
+                experiencesHTML += `
+                    <div class="exp-item">
+                        <div class="exp-header">${exp.title}</div>
+                        <div class="exp-company">${exp.company} | ${exp.start} - ${exp.end}</div>
+                        <div class="exp-desc">${exp.desc}</div>
+                    </div>
+                `;
+            });
+            
+            let skillsHTML = '';
+            data.skills.forEach(skill => {
+                skillsHTML += `
+                    <div class="skill-item">
+                        <span>${skill.name}</span>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: ${skill.level}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return `
+                <div class="cv-container">
+                    <div class="sidebar sidebar-${data.color}">
+                        <div class="profile-img">${initials}</div>
+                        <div class="name">${data.fullName}</div>
+                        <div class="title">${data.jobTitle}</div>
+                        
+                        <div class="section-title">معلومات الاتصال</div>
+                        <div style="line-height: 1.8;">
+                            📧 ${data.email}<br>
+                            📱 ${data.phone}<br>
+                            ${data.linkedin ? `🌐 ${data.linkedin}<br>` : ''}
+                            📍 ${data.city}
+                        </div>
+                        
+                        ${skillsHTML ? `
+                            <div class="section-title">المهارات</div>
+                            <div>${skillsHTML}</div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="main-content">
+                        ${data.summary ? `
+                            <div class="main-title">نبذة شخصية</div>
+                            <div style="margin-bottom: 25px; line-height: 1.6;">${data.summary}</div>
+                        ` : ''}
+                        
+                        ${experiencesHTML ? `
+                            <div class="main-title">الخبرات العملية</div>
+                            ${experiencesHTML}
+                        ` : ''}
+                        
+                        ${data.degree ? `
+                            <div class="main-title">المؤهلات العلمية</div>
+                            <div class="exp-item">
+                                <div class="exp-header">${data.degree}</div>
+                                <div class="exp-company">${data.university} - ${data.gradYear}</div>
+                                ${data.gpa ? `<div>التقدير: ${data.gpa}</div>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // طباعة السيرة الذاتية
+        function printCV() {
+            try {
+                const formData = collectFormData();
+                const cvHTML = generateFullCV(formData);
+                
+                // فتح نافذة طباعة جديدة
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
 <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>السيرة الذاتية - ${formData.fullName}</title>
+    <style>
+        @media print { @page { margin: 0.5in; } }
+        body { font-family: Arial, sans-serif; margin: 0; line-height: 1.6; }
+        .cv-container { display: flex; max-width: 100%; }
+        .sidebar { width: 35%; padding: 20px; color: white; }
+        .sidebar-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .sidebar-green { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .sidebar-orange { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .sidebar-purple { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .sidebar-red { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .profile-img { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.9); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #333; font-size: 20px; }
+        .name { font-size: 22px; font-weight: bold; text-align: center; margin-bottom: 8px; }
+        .title { font-size: 14px; text-align: center; opacity: 0.9; margin-bottom: 20px; }
+        .section-title { font-size: 16px; font-weight: bold; margin: 20px 0 12px 0; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .main-content { flex: 1; padding: 20px; }
+        .main-title { font-size: 18px; font-weight: bold; color: #667eea; margin: 20px 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid #667eea; }
+        .exp-item { margin-bottom: 15px; }
+        .exp-header { font-weight: bold; color: #333; margin-bottom: 4px; }
+        .exp-company { color: #666; margin-bottom: 6px; font-size: 14px; }
+        .exp-desc { line-height: 1.5; font-size: 14px; }
+        .skill-item { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; font-size: 14px; }
+        .skill-bar { width: 80px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; }
+        .skill-progress { height: 100%; background: white; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    ${cvHTML}
+</body>
+</html>
+                `);
+                printWindow.document.close();
+                
+                // انتظار تحميل المحتوى ثم الطباعة
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error printing CV:', error);
+                alert('حدث خطأ أثناء الطباعة. جرب مرة أخرى.');
+            }
+        }<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
