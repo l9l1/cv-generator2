@@ -1,4 +1,76 @@
-// طباعة السيرة الذاتية
+// إنشاء HTML كامل للسيرة الذاتية
+        function generateFullCV(data) {
+            const initials = data.fullName.split(' ').map(name => name.charAt(0)).join('').substring(0, 2);
+            
+            let experiencesHTML = '';
+            data.experiences.forEach(exp => {
+                experiencesHTML += `
+                    <div class="exp-item">
+                        <div class="exp-header">${exp.title}</div>
+                        <div class="exp-company">${exp.company} | ${exp.start} - ${exp.end}</div>
+                        <div class="exp-desc">${exp.desc}</div>
+                    </div>
+                `;
+            });
+            
+            let skillsHTML = '';
+            data.skills.forEach(skill => {
+                skillsHTML += `
+                    <div class="skill-item">
+                        <span>${skill.name}</span>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: ${skill.level}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return `
+                <div class="cv-container">
+                    <div class="sidebar sidebar-${data.color}">
+                        <div class="profile-img">${initials}</div>
+                        <div class="name">${data.fullName}</div>
+                        <div class="title">${data.jobTitle}</div>
+                        
+                        <div class="section-title">معلومات الاتصال</div>
+                        <div style="line-height: 1.8;">
+                            📧 ${data.email}<br>
+                            📱 ${data.phone}<br>
+                            ${data.linkedin ? `🌐 ${data.linkedin}<br>` : ''}
+                            📍 ${data.city}
+                        </div>
+                        
+                        ${skillsHTML ? `
+                            <div class="section-title">المهارات</div>
+                            <div>${skillsHTML}</div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="main-content">
+                        ${data.summary ? `
+                            <div class="main-title">نبذة شخصية</div>
+                            <div style="margin-bottom: 25px; line-height: 1.6;">${data.summary}</div>
+                        ` : ''}
+                        
+                        ${experiencesHTML ? `
+                            <div class="main-title">الخبرات العملية</div>
+                            ${experiencesHTML}
+                        ` : ''}
+                        
+                        ${data.degree ? `
+                            <div class="main-title">المؤهلات العلمية</div>
+                            <div class="exp-item">
+                                <div class="exp-header">${data.degree}</div>
+                                <div class="exp-company">${data.university} - ${data.gradYear}</div>
+                                ${data.gpa ? `<div>التقدير: ${data.gpa}</div>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // طباعة السيرة الذاتية
         function printCV() {
             try {
                 const formData = collectFormData();
@@ -54,51 +126,7 @@
                 console.error('Error printing CV:', error);
                 alert('حدث خطأ أثناء الطباعة. جرب مرة أخرى.');
             }
-        }
-        
-        return `
-                <div class="cv-container">
-                    <div class="sidebar sidebar-${data.color}">
-                        <div class="profile-img">${initials}</div>
-                        <div class="name">${data.fullName}</div>
-                        <div class="title">${data.jobTitle}</div>
-                        
-                        <div class="section-title">معلومات الاتصال</div>
-                        <div style="line-height: 1.8;">
-                            📧 ${data.email}<br>
-                            📱 ${data.phone}<br>
-                            ${data.linkedin ? `🌐 ${data.linkedin}<br>` : ''}
-                            📍 ${data.city}
-                        </div>
-                        
-                        ${skillsHTML ? `
-                            <div class="section-title">المهارات</div>
-                            <div>${skillsHTML}</div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="main-content">
-                        ${data.summary ? `
-                            <div class="main-title">نبذة شخصية</div>
-                            <div style="margin-bottom: 25px; line-height: 1.6;">${data.summary}</div>
-                        ` : ''}
-                        
-                        ${experiencesHTML ? `
-                            <div class="main-title">الخبرات العملية</div>
-                            ${experiencesHTML}
-                        ` : ''}
-                        
-                        ${data.degree ? `
-                            <div class="main-title">المؤهلات العلمية</div>
-                            <div class="exp-item">
-                                <div class="exp-header">${data.degree}</div>
-                                <div class="exp-company">${data.university} - ${data.gradYear}</div>
-                                ${data.gpa ? `<div>التقدير: ${data.gpa}</div>` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;<!DOCTYPE html>
+        }<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
